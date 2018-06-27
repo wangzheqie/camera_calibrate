@@ -3,7 +3,6 @@
 
 __author__ = "wang zhe"
 __date__ = "18-6-10, 9:36"
-__copyright__ = "copyright PI, 2018"
 __version__ = "1.0"
 
 import sys
