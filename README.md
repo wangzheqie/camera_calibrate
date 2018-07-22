@@ -2,7 +2,7 @@
 
 * The calibration program that save data in each step
 * The stereo camera calibration that use Halcon Circle Board
-* You should change your `objp` in line 28 and 29
+* You should change your `objp` in line 40 and 41
 
 ## Test Dependences
 
