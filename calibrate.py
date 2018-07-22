@@ -15,6 +15,18 @@ is_debug = False
 
 
 def SingleCalibrate(path, cam, patchSize):
+    """
+    calibrate a single camera
+    Parameters
+    ----------
+    path
+    cam
+    patchSize
+
+    Returns
+    -------
+
+    """
     mtx_name = "matrix_" + cam + ".txt"
     dist_name = "dist_" + cam + ".txt"
     rvecs_name = "rvecs_" + cam + ".txt"
@@ -58,6 +70,20 @@ def SingleCalibrate(path, cam, patchSize):
 
 
 def StereoCalibrate(path_l, path_r, path_stereo, patternSize, imgSize):
+    """
+    calibrate stereo camera-pair with the result from two single cameras
+    Parameters
+    ----------
+    path_l
+    path_r
+    path_stereo
+    patternSize
+    imgSize
+
+    Returns
+    -------
+
+    """
     obj = np.loadtxt(path_l + "objp_left.txt", np.float32)
     imgpL = np.loadtxt(path_l + "imgp_left.txt", np.float32)
     imgpR = np.loadtxt(path_r + "imgp_right.txt", np.float32)
@@ -70,8 +96,8 @@ def StereoCalibrate(path_l, path_r, path_stereo, patternSize, imgSize):
     obj = obj.reshape(-1, t, 3)
     imgpL = imgpL.reshape(-1, t, 2)
     imgpR = imgpR.reshape(-1, t, 2)
-    print distL
-    print tuple(distL)
+    print(distL)
+    print(tuple(distL))
     ret, AL, AR, DL, DR, R, T, E, F = cv2.stereoCalibrate(obj, imgpL, imgpR, cameraMatrix1=mtxL, distCoeffs1=distL,
                                                           cameraMatrix2=mtxR, distCoeffs2=distR, imageSize=imgSize)
     np.savetxt(path_stereo + "AL.txt", AL)
@@ -88,7 +114,7 @@ def StereoCalibrate(path_l, path_r, path_stereo, patternSize, imgSize):
 
 def stereoRectify(path_l, path_r, path_stereo, alpha, imgSize):
     """
-
+    stereo camera-pair rectification
     :param path_l:
     :param path_r:
     :param path_stereo:
@@ -111,6 +137,20 @@ def stereoRectify(path_l, path_r, path_stereo, alpha, imgSize):
 
 
 def stereoUnDist(path_l, path_r, path_stereo, imgSize):
+    """
+    Un-distornate a pair of images with stereo cameras
+    Note: this function is not tested!!!
+    Parameters
+    ----------
+    path_l
+    path_r
+    path_stereo
+    imgSize
+
+    Returns
+    -------
+
+    """
     mtxL = np.loadtxt(path_l + "matrix_left.txt")
     mtxR = np.loadtxt(path_r + "matrix_right.txt")
     distL = np.loadtxt(path_l + "dist_left.txt")
@@ -137,9 +177,10 @@ def stereoUnDist(path_l, path_r, path_stereo, imgSize):
         cv2.imwrite(path + "/rectified/rectify_" + name, r_imgR)
 
 
-def unDist( img, path, cam, alpha=0, is_debug=False):
+def unDist(img, path, cam, alpha=0, is_debug=False):
     """
-
+    Un-distornate an image
+    Note: this function is not tested!!!
     :param img:
     :param alpha: 0: retrieve only sensible pixels, 1: keep all pixels
     :return:
@@ -159,7 +200,21 @@ def unDist( img, path, cam, alpha=0, is_debug=False):
     return dst, roi
 
 
-def reProjectError( path, cam, objPoints, imgPoints):
+def reProjectError(path, cam, objPoints, imgPoints):
+    """
+    calculate the reproject error
+    Note: this function not tested!!!
+    Parameters
+    ----------
+    path
+    cam
+    objPoints
+    imgPoints
+
+    Returns
+    -------
+
+    """
     total_error = 0
 
     mtx_name = "matrix_" + cam + ".txt"
@@ -171,7 +226,7 @@ def reProjectError( path, cam, objPoints, imgPoints):
     rvecs = np.loadtxt(path + rvecs_name)
     tvecs = np.loadtxt(path + tvecs_name)
 
-    for i in xrange(len(objPoints)):
+    for i in range(len(objPoints)):
         imgPoints2, _ = cv2.projectPoints(objPoints[i], rvecs[i], tvecs[i], mtx, dist)
         error = cv2.norm(imgPoints[i], imgPoints2, cv2.NORM_L2) / len(imgPoints2)
         total_error += error
